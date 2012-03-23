@@ -323,6 +323,11 @@ $.widget( "ui.iviewer", $.ui.mouse, {
     **/
     fit: function(skip_animation)
     {
+        this.set_zoom(this._getFitZoom(), skip_animation);
+    },
+
+    _getFitZoom: function()
+    {
         var aspect_ratio = this.img_object.orig_width() / this.img_object.orig_height();
         var window_ratio = this.options.width /  this.options.height;
         var choose_left = (aspect_ratio > window_ratio);
@@ -335,7 +340,7 @@ $.widget( "ui.iviewer", $.ui.mouse, {
             new_zoom = this.options.height / this.img_object.orig_height() * 100;
         }
 
-      this.set_zoom(new_zoom, skip_animation);
+        return new_zoom;
     },
 
     /**
@@ -483,6 +488,13 @@ $.widget( "ui.iviewer", $.ui.mouse, {
         else if(new_zoom > this.options.zoom_max)
         {
             new_zoom = this.options.zoom_max;
+        }
+        else if (this.options.zoom_min == "fit")
+        {
+            var fit_zoom = this._getFitZoom();
+            if (new_zoom < fit_zoom) {
+                new_zoom = fit_zoom;
+            }
         }
 
         /* we fake these values to make fit zoom properly work */
